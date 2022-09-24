@@ -22,17 +22,28 @@ class HairColor(Enum):
 
 
 class Person(BaseModel):
-    first_name: str = Field(..., min_length=1, max_length=50)
-    last_name: str = Field(..., min_length=1, max_length=50)
-    age: int = Field(..., gt=0, le=115)
-    hair_color: Optional[HairColor] = Field(default=None)
-    is_married: Optional[bool] = Field(default=None)
+    first_name: str = Field(..., min_length=1, max_length=50, example="Alex")
+    last_name: str = Field(..., min_length=1, max_length=50, example="V")
+    age: int = Field(..., gt=0, le=115, example=21)
+    hair_color: Optional[HairColor] = Field(default=None, example="black")
+    is_married: Optional[bool] = Field(default=None, example=False)
+
+    # class Config:
+    #     schema_extra = {
+    #         "example": {
+    #             "first_name": "Facundo",
+    #             "last_name": "V",
+    #             "age": 21,
+    #             "hair_color": "black",
+    #             "is_married": False,
+    #         }
+    #     }
 
 
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
+    city: str = Field(..., min_length=1, max_length=50, example="Providencia")
+    state: str = Field(..., min_length=1, max_length=50, example="Santiago")
+    country: str = Field(..., min_length=1, max_length=50, example="Chile")
 
 
 @app.get("/")  # PATH OPERATOR / DECORATOR
@@ -82,8 +93,8 @@ def update_person(
         ..., title="Person ID", description="This is the person ID", gt=0
     ),
     person: Person = Body(...),
-    location: Location = Body(...),
+    # location: Location = Body(...),
 ):
-    results = person.dict()
-    results.update(location.dict())
-    return results
+    # results = person.dict()
+    # results.update(location.dict())
+    return person
