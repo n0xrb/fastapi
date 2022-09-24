@@ -1,5 +1,6 @@
 # Python
 from typing import Optional
+from unittest import result
 
 # Pydantic
 from pydantic import BaseModel
@@ -16,6 +17,12 @@ class Person(BaseModel):
     age: int
     hair_color: Optional[str] = None
     is_married: Optional[bool] = None
+
+
+class Location(BaseModel):
+    city: str
+    state: str
+    country: str
 
 
 @app.get("/")  # PATH OPERATOR / DECORATOR
@@ -50,5 +57,23 @@ def show_person(
 
 # Validations: Path Parameters
 @app.get("/person/detail/{person_id}")
-def show_person_from_path(person_id: int = Path(..., gt=0, title="")):
+def show_person_from_path(
+    person_id: int = Path(
+        ..., gt=0, title="Person ID", description="This is the person id. It's required"
+    )
+):
     return {person_id: "It exists!"}
+
+
+# Validations: Request Body
+@app.put("/person/{person_id}")
+def update_person(
+    person_id: int = Path(
+        ..., title="Person ID", description="This is the person ID", gt=0
+    ),
+    person: Person = Body(...),
+    location: Location = Body(...),
+):
+    results = person.dict()
+    results.update(location.dict())
+    return results
